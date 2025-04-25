@@ -1,8 +1,5 @@
 # SWOT Simulation Game
 
-```md
-## 🛠️ Setup
-
 ### 1. Node Version
 
 Make sure you're using the correct Node version specified in `.nvmrc`:
