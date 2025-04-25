@@ -23,8 +23,6 @@ export default function Phase1Page() {
 
     const me = players.find((p) => p.id === playerId);
 
-    console.log("STORE", useGameStore.getState());
-
     useEffect(() => {
         openModal("mission");
     }, [openModal]);

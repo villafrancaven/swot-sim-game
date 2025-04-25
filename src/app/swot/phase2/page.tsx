@@ -76,29 +76,31 @@ export default function Phase2Page() {
         }
     }, [busdevPlayer]);
 
-    const submitChanges = async (updatedFactors = localFactors) => {
-        try {
-            const playerRequest = {
+    const submitChanges = async (updatedFactors: { brand: any; tech: any }) => {
+        const role = currentPlayer?.role;
+        let playerRequest = {};
+
+        if (role === "Risk") {
+            playerRequest = {
+                brand_market_status: updatedFactors.brand.status,
+                tech_infra_status: updatedFactors.tech.status,
+            };
+        } else if (role === "BusDev") {
+            playerRequest = {
                 brand_market_score: updatedFactors.brand.score,
                 brand_market_reason: updatedFactors.brand.reason,
                 tech_infra_score: updatedFactors.tech.score,
                 tech_infra_reason: updatedFactors.tech.reason,
-                brand_market_status: updatedFactors.brand.status,
-                tech_infra_status: updatedFactors.tech.status,
             };
-
-            await submitPlayerResponses(gamePlayerId, playerRequest);
-
-            socket.emit("player_submitted", {
-                player_id: gamePlayerId,
-                room_id: gameRoomNumber,
-                ...playerRequest,
-            });
-
-            console.log("Submitted:", playerRequest);
-        } catch (error) {
-            console.error("Failed to submit player responses:", error);
         }
+
+        await submitPlayerResponses(gamePlayerId, playerRequest);
+
+        socket.emit("player_submitted", {
+            player_id: gamePlayerId,
+            room_id: gameRoomNumber,
+            ...playerRequest,
+        });
     };
 
     const debouncedSubmitChanges = useCallback(
