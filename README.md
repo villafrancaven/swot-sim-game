@@ -54,3 +54,6 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to view the app.
+
+
+#### NOTE: Please make sure that you run https://github.com/villafrancaven/swot-sim-game-service alongside this
