@@ -15,12 +15,15 @@ export default function RegisterPage() {
     const [name, setName] = useState("");
     const [team, setTeam] = useState<"busdev" | "risk" | null>(null);
     const [roomNumber, setRoomNumber] = useState<number | "">("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const [errors, setErrors] = useState({
         name: "",
         team: "",
         roomNumber: "",
     });
+
+    const [submitError, setSubmitError] = useState("");
 
     const validateForm = () => {
         const newErrors = {
@@ -40,6 +43,9 @@ export default function RegisterPage() {
 
     const handleSubmit = async () => {
         if (!validateForm()) return;
+
+        setIsLoading(true);
+        setSubmitError("");
 
         try {
             const response = await createRoom(
@@ -66,9 +72,14 @@ export default function RegisterPage() {
             }
 
             router.push("/swot");
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to create room:", error);
-            alert("Error: Failed to create or join room. Please try again.");
+            setSubmitError(
+                error?.error ||
+                    "Failed to create or join room. Please try again."
+            );
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -148,11 +159,42 @@ export default function RegisterPage() {
                     )}
                 </div>
 
+                {submitError && (
+                    <p className="text-red-500 text-sm mb-4 text-center">
+                        {submitError}
+                    </p>
+                )}
+
                 <button
                     onClick={handleSubmit}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg"
+                    disabled={isLoading}
+                    className={`w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-opacity ${
+                        isLoading ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
                 >
-                    Enter Room
+                    {isLoading && (
+                        <svg
+                            className="animate-spin h-5 w-5 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                            ></circle>
+                            <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                            ></path>
+                        </svg>
+                    )}
+                    {isLoading ? "Entering..." : "Enter Room"}
                 </button>
             </div>
         </main>
